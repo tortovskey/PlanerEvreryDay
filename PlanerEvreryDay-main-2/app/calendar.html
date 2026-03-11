@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planer EveryDay - Календарь</title>
+    <link rel="shortcut icon" href="static/img/4e288c0154d11f18cca864982c6637a_1.jpeg" type="image/x-icon">
+    <link rel="stylesheet" href="static/css/calendar.css"
+</head>
+<body class="light-theme">
+<div class="layout-wrapper">
+    <!-- Верхняя панель -->
+    <div class="top-bar">
+        <div class="left-controls">
+            <a href="index.html" class="back-home">
+                <span>←</span>
+                <span>На главную</span>
+            </a>
+            <div class="sun-moon-toggle">
+                <button class="sun-btn active" id="sunBtn">☀️</button>
+                <button class="moon-btn" id="moonBtn">🌙</button>
+            </div>
+        </div>
+        
+        <div class="right-controls">
+            <div class="taskbar">
+                <div class="taskbar-item" id="showProfileBtn"><span class="profile-avatar">П</span><span>Профиль</span></div>
+                <div class="taskbar-item" id="aiHelperBtn"><span>💬</span><span>ИИ помощник</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Календарь -->
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <h2>📅 Календарь задач</h2>
+            <div class="calendar-nav">
+                <button class="calendar-nav-btn" onclick="changeMonth(-1)">◀</button>
+                <span class="calendar-month-year" id="currentMonthYear">Март 2026</span>
+                <button class="calendar-nav-btn" onclick="changeMonth(1)">▶</button>
+            </div>
+            <div class="view-controls">
+                <button class="active" id="monthViewBtn" onclick="switchView('month')">Месяц</button>
+                <button id="yearViewBtn" onclick="switchView('year')">Год</button>
+            </div>
+        </div>
+
+        <div class="weekdays" id="weekdays">
+            <div class="weekday">Пн</div>
+            <div class="weekday">Вт</div>
+            <div class="weekday">Ср</div>
+            <div class="weekday">Чт</div>
+            <div class="weekday">Пт</div>
+            <div class="weekday">Сб</div>
+            <div class="weekday">Вс</div>
+        </div>
+
+        <div class="calendar-grid" id="monthGrid"></div>
+        <div class="calendar-grid" id="yearGrid" style="display: none; grid-template-columns: repeat(4, 1fr);"></div>
+
+        <!-- Кнопка добавления задачи -->
+        <button class="add-task-button" onclick="openAddTaskModal()">
+            <span>➕</span>
+            Добавить новую задачу
+        </button>
+
+        <div class="upcoming-section">
+            <div class="upcoming-title">
+                <span>📋 Предстоящие задачи</span>
+                <span class="upcoming-badge" id="upcomingCount">0 задач</span>
+            </div>
+            <div class="task-cards" id="upcomingTasksList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Уведомления -->
+<div class="notification-toast" id="notificationToast">
+    <span id="notificationMessage">Действие выполнено</span>
+    <span class="notification-close" id="notificationClose">✕</span>
+</div>
+
+<!-- Модальное окно задачи -->
+<div class="modal task-modal" id="taskModal">
+    <div class="modal-backdrop" id="taskBackdrop"></div>
+    <div class="modal-card">
+        <div class="task-modal-header">
+            <h2 id="taskModalTitle">➕ Новая задача</h2>
+            <div class="close-btn" id="closeTaskBtn">✕</div>
+        </div>
+
+        <div class="form-group">
+            <label>📝 Название задачи</label>
+            <input type="text" id="taskTitle" placeholder="Введите название задачи..." autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label>📋 Описание</label>
+            <textarea id="taskDescription" placeholder="Введите описание задачи (необязательно)"></textarea>
+        </div>
+
+        <div class="datetime-group">
+            <div class="form-group">
+                <label>📅 Дата</label>
+                <input type="date" id="taskDate">
+            </div>
+            <div class="form-group">
+                <label>⏰ Время</label>
+                <input type="time" id="taskTime" value="09:00">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>🎯 Приоритет</label>
+            <select id="taskPriority">
+                <option value="low">🟢 Низкий</option>
+                <option value="medium" selected>🟡 Средний</option>
+                <option value="high">🔴 Высокий</option>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn-secondary" id="cancelTaskBtn">Отмена</button>
+            <button class="btn-primary" id="saveTaskBtn">Сохранить задачу</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно профиля -->
+<div class="modal profile-modal" id="profileModal">
+    <div class="modal-backdrop" id="profileBackdrop"></div>
+    <div class="modal-card">
+        <div style="position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer;" id="closeProfileBtn">✕</div>
+        
+        <div id="authBlock">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h2>Добро пожаловать</h2>
+                <p>Войти или зарегистрироваться</p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                <div style="padding: 12px; background-color: #4285f4; color: white; border-radius: 8px; text-align: center; cursor: pointer;" onclick="loginWithSocial('Google')">G через Google</div>
+                <div style="padding: 12px; background-color: #ffcc00; color: black; border-radius: 8px; text-align: center; cursor: pointer;" onclick="loginWithSocial('Яндекс')">Я через Яндекс</div>
+                <div style="padding: 12px; background-color: #4c75a3; color: white; border-radius: 8px; text-align: center; cursor: pointer;" onclick="loginWithSocial('VK')">VK через VK</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                <hr style="flex: 1; border-color: var(--border-color);"><span>или</span><hr style="flex: 1; border-color: var(--border-color);">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>Email</label>
+                <input type="email" id="loginEmail" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-primary); color: var(--text-primary);">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label>Пароль</label>
+                <input type="password" id="loginPassword" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-primary); color: var(--text-primary);">
+            </div>
+            <button onclick="registerUser()" style="width: 100%; padding: 12px; background-color: var(--accent-color); color: white; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 20px;">Регистрация</button>
+        </div>
+
+        <div id="profileBlock" class="hidden">
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 30px;">
+                <div style="width: 60px; height: 60px; background-color: var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;">👤</div>
+                <div>
+                    <h2 id="userName">Алексей Петров</h2>
+                    <p id="userEmail">alexey@example.com</p>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px;">
+                <div style="background-color: var(--bg-secondary); padding: 15px; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 24px; font-weight: bold;" id="userTaskCount">0</div>
+                    <div>задачи</div>
+                </div>
+                <div style="background-color: var(--bg-secondary); padding: 15px; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 24px; font-weight: bold;" id="userCompletedCount">0</div>
+                    <div>выполнено</div>
+                </div>
+                <div style="background-color: var(--bg-secondary); padding: 15px; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 24px; font-weight: bold;" id="userDaysCount">0</div>
+                    <div>дней</div>
+                </div>
+            </div>
+            <button onclick="logoutUser()" style="width: 100%; padding: 12px; background-color: var(--error); color: white; border: none; border-radius: 8px; cursor: pointer;">🚪 Выйти</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно чата -->
+<div class="modal chat-modal" id="chatModal">
+    <div class="modal-backdrop" id="chatBackdrop"></div>
+    <div class="modal-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>💬 ИИ помощник</h2>
+            <div id="closeChatBtn" style="font-size: 24px; cursor: pointer;">✕</div>
+        </div>
+        <div id="chatMessages" style="height: 300px; overflow-y: auto; margin-bottom: 20px; padding: 10px; background-color: var(--bg-secondary); border-radius: 8px;">
+            <div>👋 Здравствуйте! Я ваш помощник.</div>
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+            <button style="padding: 8px 12px; background-color: var(--bg-secondary); border: none; border-radius: 20px; cursor: pointer;" onclick="addSuggestion('Показать задачи')">📋 Задачи</button>
+            <button style="padding: 8px 12px; background-color: var(--bg-secondary); border: none; border-radius: 20px; cursor: pointer;" onclick="addSuggestion('Добавить задачу')">➕ Добавить</button>
+            <button style="padding: 8px 12px; background-color: var(--bg-secondary); border: none; border-radius: 20px; cursor: pointer;" onclick="addSuggestion('Помощь')">❓ Помощь</button>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="chatInput" placeholder="Введите сообщение..." style="flex: 1; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-primary); color: var(--text-primary);">
+            <button id="sendChatBtn" style="padding: 12px 20px; background-color: var(--accent-color); color: white; border: none; border-radius: 8px; cursor: pointer;">➤</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // DOM элементы
+    const profileModal = document.getElementById('profileModal');
+    const showProfileBtn = document.getElementById('showProfileBtn');
+    const closeProfileBtn = document.getElementById('closeProfileBtn');
+    const profileBackdrop = document.getElementById('profileBackdrop');
+
+    const chatModal = document.getElementById('chatModal');
+    const aiHelperBtn = document.getElementById('aiHelperBtn');
+    const closeChatBtn = document.getElementById('closeChatBtn');
+    const chatBackdrop = document.getElementById('chatBackdrop');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendChatBtn = document.getElementById('sendChatBtn');
+
+    const taskModal = document.getElementById('taskModal');
+    const closeTaskBtn = document.getElementById('closeTaskBtn');
+    const cancelTaskBtn = document.getElementById('cancelTaskBtn');
+    const taskBackdrop = document.getElementById('taskBackdrop');
+    const saveTaskBtn = document.getElementById('saveTaskBtn');
+    const taskTitle = document.getElementById('taskTitle');
+    const taskDescription = document.getElementById('taskDescription');
+    const taskDate = document.getElementById('taskDate');
+    const taskTime = document.getElementById('taskTime');
+    const taskPriority = document.getElementById('taskPriority');
+    const taskModalTitle = document.getElementById('taskModalTitle');
+
+    const notificationToast = document.getElementById('notificationToast');
+    const notificationMessage = document.getElementById('notificationMessage');
+    const notificationClose = document.getElementById('notificationClose');
+
+    const sunBtn = document.getElementById('sunBtn');
+    const moonBtn = document.getElementById('moonBtn');
+    const lightHeaderImg = document.getElementById('lightHeaderImg');
+    const darkHeaderImg = document.getElementById('darkHeaderImg');
+    const body = document.body;
+
+    // Календарь
+    const monthGrid = document.getElementById('monthGrid');
+    const yearGrid = document.getElementById('yearGrid');
+    const currentMonthYear = document.getElementById('currentMonthYear');
+    const monthViewBtn = document.getElementById('monthViewBtn');
+    const yearViewBtn = document.getElementById('yearViewBtn');
+    const weekdays = document.getElementById('weekdays');
+    const upcomingTasksList = document.getElementById('upcomingTasksList');
+    const upcomingCount = document.getElementById('upcomingCount');
+
+    // Профиль
+    const authBlock = document.getElementById('authBlock');
+    const profileBlock = document.getElementById('profileBlock');
+    const userName = document.getElementById('userName');
+    const userEmail = document.getElementById('userEmail');
+    const userTaskCount = document.getElementById('userTaskCount');
+    const userCompletedCount = document.getElementById('userCompletedCount');
+    const userDaysCount = document.getElementById('userDaysCount');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassword = document.getElementById('loginPassword');
+
+    // Состояние
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+    let nextId = parseInt(localStorage.getItem('nextId')) || tasks.length + 1;
+    let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    let currentUser = JSON.parse(localStorage.getItem('currentUser')) || {
+        name: 'Гость', email: 'guest@example.com', completedCount: 0, daysCount: 1
+    };
+    let selectedDate = null;
+
+    // Календарь
+    let currentDate = new Date();
+    let currentYear = currentDate.getFullYear();
+    let currentMonth = currentDate.getMonth();
+    let calendarView = 'month';
+
+    // Установка текущей даты в поле выбора
+    function setDefaultDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        taskDate.value = `${year}-${month}-${day}`;
+    }
+
+    function saveTasks() {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        localStorage.setItem('nextId', nextId.toString());
+        renderMonth();
+        renderUpcomingTasks();
+    }
+
+    function saveUser() {
+        localStorage.setItem('isLoggedIn', isLoggedIn);
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    }
+
+    function renderMonth() {
+        if (!monthGrid) return;
+        
+        const firstDay = new Date(currentYear, currentMonth, 1);
+        const lastDay = new Date(currentYear, currentMonth + 1, 0);
+        const startingDay = firstDay.getDay() || 7;
+        const totalDays = lastDay.getDate();
+        
+        const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Окторябрь', 'Ноябрь', 'Декабрь'];
+        currentMonthYear.textContent = monthNames[currentMonth] + ' ' + currentYear;
+        
+        let gridHtml = '';
+        
+        // Пустые ячейки
+        for (let i = 1; i < startingDay; i++) {
+            gridHtml += '<div class="calendar-day empty"></div>';
+        }
+        
+        const today = new Date();
+        for (let day = 1; day <= totalDays; day++) {
+            const isToday = today.getDate() === day && today.getMonth() === currentMonth && today.getFullYear() === currentYear;
+            const isWeekend = (startingDay + day - 2) % 7 === 5 || (startingDay + day - 2) % 7 === 6;
+            
+            // Проверяем есть ли задачи на этот день
+            const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const dayTasks = tasks.filter(t => t.date === dateStr);
+            const hasTasks = dayTasks.length > 0;
+            
+            gridHtml += `
+                <div class="calendar-day ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''} ${hasTasks ? 'has-tasks' : ''}" onclick="selectDay(${day})">
+                    <span class="day-number">${day}</span>
+                    ${hasTasks ? `<span class="day-tasks">${dayTasks.length} ${dayTasks.length === 1 ? 'задача' : 'задачи'}</span>` : ''}
+                    <span class="add-task-icon" onclick="event.stopPropagation(); openAddTaskModal('${dateStr}')">➕</span>
+                </div>
+            `;
+        }
+        monthGrid.innerHTML = gridHtml;
+    }
+
+    function renderYear() {
+        if (!yearGrid) return;
+        
+        const monthNames = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+        let gridHtml = '';
+        
+        for (let month = 0; month < 12; month++) {
+            const monthTasks = tasks.filter(t => {
+                const taskDate = new Date(t.date);
+                return taskDate.getMonth() === month && taskDate.getFullYear() === currentYear;
+            }).length;
+            
+            gridHtml += `
+                <div class="calendar-day" onclick="selectMonth(${month})">
+                    <span class="day-number">${monthNames[month]}</span>
+                    ${monthTasks > 0 ? `<span class="day-tasks">${monthTasks} задач</span>` : ''}
+                </div>
+            `;
+        }
+        yearGrid.innerHTML = gridHtml;
+        currentMonthYear.textContent = currentYear;
+    }
+
+    window.changeMonth = function(delta) {
+        if (calendarView === 'month') {
+            currentMonth += delta;
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            else if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            renderMonth();
+        } else {
+            currentYear += delta;
+            renderYear();
+        }
+    };
+
+    window.switchView = function(view) {
+        calendarView = view;
+        if (view === 'month') {
+            monthGrid.style.display = 'grid';
+            yearGrid.style.display = 'none';
+            weekdays.style.display = 'grid';
+            monthViewBtn.classList.add('active');
+            yearViewBtn.classList.remove('active');
+            renderMonth();
+        } else {
+            monthGrid.style.display = 'none';
+            yearGrid.style.display = 'grid';
+            weekdays.style.display = 'none';
+            yearViewBtn.classList.add('active');
+            monthViewBtn.classList.remove('active');
+            renderYear();
+        }
+    };
+
+    window.selectDay = function(day) {
+        const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        openAddTaskModal(dateStr);
+    };
+
+    window.selectMonth = function(month) {
+        currentMonth = month;
+        switchView('month');
+    };
+
+    function renderUpcomingTasks() {
+        if (!upcomingTasksList) return;
+        
+        // Сортируем задачи по дате
+        const sortedTasks = [...tasks].sort((a, b) => {
+            if (a.date < b.date) return -1;
+            if (a.date > b.date) return 1;
+            return a.time.localeCompare(b.time);
+        }).slice(0, 5);
+        
+        if (sortedTasks.length === 0) {
+            upcomingTasksList.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">Нет предстоящих задач</div>';
+            upcomingCount.textContent = '0 задач';
+            return;
+        }
+
+        upcomingCount.textContent = `${tasks.length} ${tasks.length === 1 ? 'задача' : 'задач'}`;
+        
+        upcomingTasksList.innerHTML = sortedTasks.map(task => {
+            const priorityColor = task.priority === 'high' ? '🔴' : task.priority === 'medium' ? '🟡' : '🟢';
+            const dateObj = new Date(task.date);
+            const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}.${(dateObj.getMonth() + 1).toString().padStart(2, '0')}.${dateObj.getFullYear()}`;
+            
+            return `
+                <div class="task-row">
+                    <div class="task-left">
+                        <span class="task-date-badge">${formattedDate} ${task.time}</span>
+                        <span class="task-name">${priorityColor} ${task.title}</span>
+                        ${task.description ? `<span style="color: var(--text-secondary); font-size: 13px;">${task.description.substring(0, 30)}${task.description.length > 30 ? '...' : ''}</span>` : ''}
+                    </div>
+                    <div class="task-actions">
+                        <button class="task-action-btn edit" onclick="editTask(${task.id})">✏️</button>
+                        <button class="task-action-btn delete" onclick="deleteTask(${task.id})">🗑️</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    window.deleteTask = function(id) {
+        if (confirm('Удалить задачу?')) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveTasks();
+            addNotification('Задача удалена', 'info');
+        }
+    };
+
+    window.editTask = function(id) {
+        const task = tasks.find(t => t.id === id);
+        if (!task) return;
+        
+        taskModalTitle.textContent = '✏️ Редактировать задачу';
+        taskTitle.value = task.title;
+        taskDescription.value = task.description || '';
+        taskDate.value = task.date;
+        taskTime.value = task.time;
+        taskPriority.value = task.priority || 'medium';
+        selectedDate = task.date;
+        
+        // Сохраняем ID редактируемой задачи
+        saveTaskBtn.dataset.editId = id;
+        toggleModal(taskModal, true);
+    };
+
+    function addTask() {
+        const title = taskTitle.value.trim();
+        if (!title) {
+            addNotification('Введите название задачи', 'warning');
+            return;
+        }
+        
+        const date = taskDate.value;
+        if (!date) {
+            addNotification('Выберите дату', 'warning');
+            return;
+        }
+        
+        const newTask = {
+            id: nextId++,
+            title: title,
+            description: taskDescription.value.trim(),
+            date: date,
+            time: taskTime.value || '09:00',
+            priority: taskPriority.value,
+            completed: false,
+            createdAt: new Date().toISOString()
+        };
+        
+        tasks.push(newTask);
+        saveTasks();
+        addNotification(`Задача "${title}" добавлена на ${date}`, 'success');
+        
+        // Очищаем форму
+        taskTitle.value = '';
+        taskDescription.value = '';
+        setDefaultDate();
+        taskTime.value = '09:00';
+        taskPriority.value = 'medium';
+        
+        toggleModal(taskModal, false);
+    }
+
+    function updateTask() {
+        const id = parseInt(saveTaskBtn.dataset.editId);
+        const taskIndex = tasks.findIndex(t => t.id === id);
+        if (taskIndex === -1) return;
+        
+        const title = taskTitle.value.trim();
+        if (!title) {
+            addNotification('Введите название задачи', 'warning');
+            return;
+        }
+        
+        tasks[taskIndex] = {
+            ...tasks[taskIndex],
+            title: title,
+            description: taskDescription.value.trim(),
+            date: taskDate.value,
+            time: taskTime.value || '09:00',
+            priority: taskPriority.value
+        };
+        
+        saveTasks();
+        addNotification('Задача обновлена', 'success');
+        
+        // Очищаем
+        delete saveTaskBtn.dataset.editId;
+        taskTitle.value = '';
+        taskDescription.value = '';
+        setDefaultDate();
+        taskTime.value = '09:00';
+        taskPriority.value = 'medium';
+        
+        toggleModal(taskModal, false);
+    }
+
+    window.openAddTaskModal = function(date) {
+        taskModalTitle.textContent = '➕ Новая задача';
+        taskTitle.value = '';
+        taskDescription.value = '';
+        setDefaultDate();
+        taskTime.value = '09:00';
+        taskPriority.value = 'medium';
+        delete saveTaskBtn.dataset.editId;
+        
+        if (date) {
+            taskDate.value = date;
+        }
+        
+        toggleModal(taskModal, true);
+    };
+
+    function showNotification(message, type = 'info') {
+        notificationMessage.textContent = message;
+        notificationToast.className = 'notification-toast show ' + type;
+        setTimeout(() => notificationToast.classList.remove('show'), 3000);
+    }
+
+    function addNotification(message, type = 'info') {
+        const now = new Date();
+        const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        const titles = {
+            success: '✅ Успешно', warning: '⚠️ Внимание',
+            error: '❌ Ошибка', info: 'ℹ️ Информация'
+        };
+        const newNotification = {
+            id: Date.now(),
+            title: titles[type],
+            message: message,
+            time: timeStr,
+            date: 'Только что',
+            read: false,
+            type: type
+        };
+        notifications.unshift(newNotification);
+        localStorage.setItem('notifications', JSON.stringify(notifications));
+        showNotification(message, type);
+    }
+
+    // Тема
+    function setTheme(theme) {
+        const isDark = theme === 'dark';
+        body.classList.toggle('light-theme', !isDark);
+        body.classList.toggle('dark-theme', isDark);
+        
+        if (sunBtn && moonBtn) {
+            sunBtn.classList.toggle('active', !isDark);
+            moonBtn.classList.toggle('active', isDark);
+        }
+        
+        if (lightHeaderImg && darkHeaderImg) {
+            lightHeaderImg.style.display = isDark ? 'none' : 'block';
+            darkHeaderImg.style.display = isDark ? 'block' : 'none';
+        }
+        
+        localStorage.setItem('theme', theme);
+    }
+
+    // Модальные окна
+    function toggleModal(modal, show) {
+        if (modal) modal.classList.toggle('visible', show);
+    }
+
+    // Чат
+    function addChatMessage(sender, text) {
+        const now = new Date();
+        const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        const messageDiv = document.createElement('div');
+        messageDiv.style.marginBottom = '10px';
+        messageDiv.innerHTML = `
+            <div style="display: flex; gap: 10px; align-items: start;">
+                <div>${sender === 'user' ? '👤' : '🤖'}</div>
+                <div style="flex: 1;">
+                    <div style="background-color: ${sender === 'user' ? 'var(--accent-color)' : 'var(--bg-primary)'}; color: ${sender === 'user' ? 'white' : 'var(--text-primary)'}; padding: 10px; border-radius: 8px;">${text}</div>
+                    <div style="font-size: 10px; color: var(--text-secondary);">${timeStr}</div>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function sendUserMessage() {
+        const text = chatInput.value.trim();
+        if (!text) return;
+        addChatMessage('user', text);
+        chatInput.value = '';
+        setTimeout(() => {
+            let response = '';
+            if (text.toLowerCase().includes('задач')) {
+                response = tasks.length ? `У вас ${tasks.length} задач` : 'Нет задач';
+            } else if (text.toLowerCase().includes('добав')) {
+                response = 'Нажмите кнопку "Добавить задачу" или на плюсик в календаре';
+            } else {
+                response = 'Я понял ваш запрос';
+            }
+            addChatMessage('ai', response);
+        }, 1000);
+    }
+
+    window.addSuggestion = function(text) {
+        if (text === 'Добавить задачу') {
+            openAddTaskModal();
+        } else {
+            chatInput.value = text;
+            sendUserMessage();
+        }
+    };
+
+    // Профиль
+    function updateProfileUI() {
+        if (isLoggedIn) {
+            authBlock.classList.add('hidden');
+            profileBlock.classList.remove('hidden');
+            if (userName) userName.textContent = currentUser.name;
+            if (userEmail) userEmail.textContent = currentUser.email;
+        } else {
+            authBlock.classList.remove('hidden');
+            profileBlock.classList.add('hidden');
+        }
+        if (userTaskCount) userTaskCount.textContent = tasks.length;
+        if (userCompletedCount) userCompletedCount.textContent = currentUser.completedCount;
+        if (userDaysCount) userDaysCount.textContent = currentUser.daysCount;
+    }
+
+    window.loginWithSocial = function(provider) {
+        isLoggedIn = true;
+        currentUser.name = provider === 'Google' ? 'Иван Google' : provider === 'Яндекс' ? 'Мария Яндекс' : 'Петр VK';
+        currentUser.email = `user@${provider.toLowerCase()}.com`;
+        saveUser();
+        updateProfileUI();
+        toggleModal(profileModal, false);
+        addNotification(`Вход через ${provider} выполнен`, 'success');
+    };
+
+    window.registerUser = function() {
+        const email = loginEmail ? loginEmail.value.trim() : '';
+        const password = loginPassword ? loginPassword.value.trim() : '';
+        if (!email || !password) {
+            addNotification('Заполните все поля', 'warning');
+            return;
+        }
+        isLoggedIn = true;
+        currentUser.name = email.split('@')[0];
+        currentUser.email = email;
+        saveUser();
+        updateProfileUI();
+        toggleModal(profileModal, false);
+        addNotification('Регистрация успешна', 'success');
+    };
+
+    window.logoutUser = function() {
+        isLoggedIn = false;
+        saveUser();
+        updateProfileUI();
+        toggleModal(profileModal, false);
+        addNotification('Выход выполнен', 'info');
+    };
+
+    // Обработчики
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+
+    if (sunBtn) sunBtn.addEventListener('click', () => setTheme('light'));
+    if (moonBtn) moonBtn.addEventListener('click', () => setTheme('dark'));
+
+    if (showProfileBtn) showProfileBtn.addEventListener('click', () => toggleModal(profileModal, true));
+    if (closeProfileBtn) closeProfileBtn.addEventListener('click', () => toggleModal(profileModal, false));
+    if (profileBackdrop) profileBackdrop.addEventListener('click', () => toggleModal(profileModal, false));
+
+    if (aiHelperBtn) aiHelperBtn.addEventListener('click', () => toggleModal(chatModal, true));
+    if (closeChatBtn) closeChatBtn.addEventListener('click', () => toggleModal(chatModal, false));
+    if (chatBackdrop) chatBackdrop.addEventListener('click', () => toggleModal(chatModal, false));
+    if (sendChatBtn) sendChatBtn.addEventListener('click', sendUserMessage);
+    if (chatInput) {
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); sendUserMessage(); }
+        });
+    }
+
+    if (closeTaskBtn) closeTaskBtn.addEventListener('click', () => toggleModal(taskModal, false));
+    if (cancelTaskBtn) cancelTaskBtn.addEventListener('click', () => toggleModal(taskModal, false));
+    if (taskBackdrop) taskBackdrop.addEventListener('click', () => toggleModal(taskModal, false));
+
+    if (saveTaskBtn) {
+        saveTaskBtn.addEventListener('click', () => {
+            if (saveTaskBtn.dataset.editId) {
+                updateTask();
+            } else {
+                addTask();
+            }
+        });
+    }
+
+    if (notificationClose) {
+        notificationClose.addEventListener('click', () => notificationToast.classList.remove('show'));
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            toggleModal(profileModal, false);
+            toggleModal(chatModal, false);
+            toggleModal(taskModal, false);
+        }
+    });
+
+    // Инициализация
+    setDefaultDate();
+    renderMonth();
+    renderUpcomingTasks();
+    updateProfileUI();
+
+    // Добавляем глобальные функции
+    window.selectDay = selectDay;
+    window.selectMonth = selectMonth;
+    window.deleteTask = deleteTask;
+    window.editTask = editTask;
+    window.openAddTaskModal = openAddTaskModal;
+})();
+</script>
+</body>
+</html>

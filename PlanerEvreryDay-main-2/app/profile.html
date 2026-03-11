@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planer EveryDay - Профиль</title>
+    <link rel="shortcut icon" href="static/img/4e288c0154d11f18cca864982c6637a_1.jpeg" type="image/x-icon">
+    <link rel="stylesheet" href="static/css/profile.css">
+</head>
+<body class="light-theme">
+<div class="layout-wrapper">
+    <!-- Хедер -->
+    <header class="header">
+        <img src="static/img/image 12.svg" alt="Planer EveryDay Light" class="light-img" id="lightHeaderImg">
+        <img src="static/img/image 21.svg" alt="Planer EveryDay Dark" class="dark-img" id="darkHeaderImg" style="display: none;">
+    </header>
+
+    <!-- Верхняя панель -->
+    <div class="top-bar">
+        <div class="left-controls">
+            <a href="index.html" class="back-home">
+                <span>←</span>
+                <span>На главную</span>
+            </a>
+            <div class="sun-moon-toggle">
+                <button class="sun-btn active" id="sunBtn">☀️</button>
+                <button class="moon-btn" id="moonBtn">🌙</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Профиль -->
+    <div class="profile-container">
+        <!-- Блок для неавторизованных -->
+        <div id="authBlock" class="auth-section">
+            <div class="auth-header">
+                <h1>Добро пожаловать!</h1>
+                <p>Войдите или создайте аккаунт</p>
+            </div>
+
+            <div class="social-buttons">
+                <button class="social-btn google" onclick="loginWithSocial('Google')">
+                    <span>G</span>
+                    Продолжить через Google
+                </button>
+                <button class="social-btn yandex" onclick="loginWithSocial('Яндекс')">
+                    <span>Я</span>
+                    Продолжить через Яндекс
+                </button>
+                <button class="social-btn vk" onclick="loginWithSocial('VK')">
+                    <span>VK</span>
+                    Продолжить через VK
+                </button>
+            </div>
+
+            <div class="divider">
+                <span class="divider-line"></span>
+                <span>или</span>
+                <span class="divider-line"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" placeholder="your@email.com" id="loginEmail">
+            </div>
+
+            <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" placeholder="••••••••" id="loginPassword">
+            </div>
+
+            <button class="register-btn" onclick="registerUser()">
+                Создать аккаунт
+            </button>
+
+            <div class="agreement">
+                Продолжая, вы соглашаетесь с <a href="#">Условиями использования</a> 
+                и <a href="#">Политикой конфиденциальности</a>
+            </div>
+
+            <div class="login-link">
+                Уже есть аккаунт? <a href="#" onclick="showLoginForm(); return false;">Войти</a>
+            </div>
+        </div>
+
+        <!-- Блок для авторизованных -->
+        <div id="profileBlock" class="profile-section">
+            <!-- Шапка профиля -->
+            <div class="profile-header">
+                <div class="profile-avatar-large" id="userAvatar">👤</div>
+                <div class="profile-title">
+                    <h2 id="userName">Алексей Петров</h2>
+                    <p id="userEmail">alexey@example.com</p>
+                </div>
+            </div>
+
+            <!-- Статистика -->
+            <div class="profile-stats-grid">
+                <div class="profile-stat-card">
+                    <div class="profile-stat-value" id="userTaskCount">2</div>
+                    <div class="profile-stat-label">задачи сегодня</div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="profile-stat-value" id="userCompletedCount">15</div>
+                    <div class="profile-stat-label">выполнено</div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="profile-stat-value" id="userDaysCount">7</div>
+                    <div class="profile-stat-label">дней в приложении</div>
+                </div>
+            </div>
+
+            <!-- Секции профиля -->
+            <div class="profile-sections">
+                <!-- Секция синхронизации -->
+                <div class="profile-section">
+                    <div class="profile-section-header" onclick="toggleSection('sync')">
+                        <span>🔄</span>
+                        <span class="section-title">Синхронизация</span>
+                        <span class="section-arrow">▼</span>
+                    </div>
+                    <div class="profile-section-content" id="syncSection">
+                        <div class="sync-info">
+                            <div class="sync-time">
+                                <span>⏱️</span>
+                                <span id="lastSyncText">Последняя синхронизация: только что</span>
+                            </div>
+                            <button class="sync-btn" id="syncNowBtn" onclick="syncNow()">
+                                <span>Синхронизировать</span>
+                            </button>
+                        </div>
+                        <div style="margin-top: 15px; font-size: 13px; color: var(--text-secondary);">
+                            📱 Данные синхронизируются между всеми устройствами
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Секция уведомлений -->
+                <div class="profile-section">
+                    <div class="profile-section-header" onclick="toggleSection('notifications')">
+                        <span>🔔</span>
+                        <span class="section-title">Уведомления</span>
+                        <span class="section-arrow">▼</span>
+                    </div>
+                    <div class="profile-section-content" id="notificationsSection">
+                        <div class="settings-grid">
+                            <div class="settings-row">
+                                <div class="settings-label">
+                                    <span>🔔</span>
+                                    <span>Push-уведомления</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="pushNotifications" checked onchange="toggleSetting('push', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="settings-row">
+                                <div class="settings-label">
+                                    <span>📧</span>
+                                    <span>Email-уведомления</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="emailNotifications" checked onchange="toggleSetting('email', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="settings-row">
+                                <div class="settings-label">
+                                    <span>⏰</span>
+                                    <span>Напоминания о задачах</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="taskReminders" checked onchange="toggleSetting('reminders', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Секция внешнего вида -->
+                <div class="profile-section">
+                    <div class="profile-section-header" onclick="toggleSection('appearance')">
+                        <span>🎨</span>
+                        <span class="section-title">Внешний вид</span>
+                        <span class="section-arrow">▼</span>
+                    </div>
+                    <div class="profile-section-content" id="appearanceSection">
+                        <div class="settings-grid">
+                            <div class="settings-row">
+                                <div class="settings-label">
+                                    <span>🌙</span>
+                                    <span>Тёмная тема</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="settings-row">
+                                <div class="settings-label">
+                                    <span>🌐</span>
+                                    <span>Язык</span>
+                                </div>
+                                <select class="settings-select" id="languageSelect" onchange="changeLanguage(this.value)">
+                                    <option value="ru">Русский</option>
+                                    <option value="en">English</option>
+                                </select>
+                            </div>
+                            <div class="settings-row">
+                                <div class="settings-label">
+                                    <span>📅</span>
+                                    <span>Формат даты</span>
+                                </div>
+                                <select class="settings-select" id="dateFormatSelect" onchange="changeDateFormat(this.value)">
+                                    <option value="DD.MM.YYYY">ДД.ММ.ГГГГ</option>
+                                    <option value="MM/DD/YYYY">ММ/ДД/ГГГГ</option>
+                                    <option value="YYYY-MM-DD">ГГГГ-ММ-ДД</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Секция звуков -->
+                <div class="profile-section">
+                    <div class="profile-section-header" onclick="toggleSection('sound')">
+                        <span>🔊</span>
+                        <span class="section-title">Звуки</span>
+                        <span class="section-arrow">▼</span>
+                    </div>
+                    <div class="profile-section-content" id="soundSection">
+                        <div class="settings-grid">
+                            <div class="settings-row">
+                                <div class="settings-label">
+                                    <span>🔊</span>
+                                    <span>Звуковые эффекты</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="soundEffects" checked onchange="toggleSetting('sounds', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="settings-row">
+                                <div class="settings-label">
+                                    <span>🎵</span>
+                                    <span>Уведомления</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="notificationSounds" checked onchange="toggleSetting('notificationSounds', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Секция конфиденциальности -->
+                <div class="profile-section">
+                    <div class="profile-section-header" onclick="toggleSection('privacy')">
+                        <span>🔒</span>
+                        <span class="section-title">Конфиденциальность</span>
+                        <span class="section-arrow">▼</span>
+                    </div>
+                    <div class="profile-section-content" id="privacySection">
+                        <div class="settings-grid">
+                            <div class="settings-row">
+                                <div class="settings-label">
+                                    <span>👁️</span>
+                                    <span>Видимость профиля</span>
+                                </div>
+                                <select class="settings-select" id="privacySelect" onchange="changePrivacy(this.value)">
+                                    <option value="public">Публичный</option>
+                                    <option value="friends">Только друзья</option>
+                                    <option value="private">Приватный</option>
+                                </select>
+                            </div>
+                            <div class="settings-row">
+                                <div class="settings-label">
+                                    <span>📊</span>
+                                    <span>Показывать статистику</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="showStats" checked onchange="toggleSetting('showStats', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопка выхода -->
+            <button class="logout-btn" onclick="logoutUser()">
+                <span>🚪</span>
+                Выйти из аккаунта
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Уведомления -->
+<div class="notification-toast" id="notificationToast">
+    <span id="notificationMessage">Действие выполнено</span>
+    <span class="notification-close" id="notificationClose">✕</span>
+</div>
+
+<script>
+(function() {
+    // DOM элементы
+    const sunBtn = document.getElementById('sunBtn');
+    const moonBtn = document.getElementById('moonBtn');
+    const lightHeaderImg = document.getElementById('lightHeaderImg');
+    const darkHeaderImg = document.getElementById('darkHeaderImg');
+    const body = document.body;
+
+    const authBlock = document.getElementById('authBlock');
+    const profileBlock = document.getElementById('profileBlock');
+    const userName = document.getElementById('userName');
+    const userEmail = document.getElementById('userEmail');
+    const userTaskCount = document.getElementById('userTaskCount');
+    const userCompletedCount = document.getElementById('userCompletedCount');
+    const userDaysCount = document.getElementById('userDaysCount');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassword = document.getElementById('loginPassword');
+    const lastSyncText = document.getElementById('lastSyncText');
+    const syncNowBtn = document.getElementById('syncNowBtn');
+    const themeToggle = document.getElementById('themeToggle');
+    const languageSelect = document.getElementById('languageSelect');
+    const dateFormatSelect = document.getElementById('dateFormatSelect');
+    const notificationToast = document.getElementById('notificationToast');
+    const notificationMessage = document.getElementById('notificationMessage');
+    const notificationClose = document.getElementById('notificationClose');
+
+    // Состояние
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    let lastSyncTime = Date.now();
+    let isSyncing = false;
+
+    let currentUser = JSON.parse(localStorage.getItem('currentUser')) || {
+        name: 'Алексей Петров',
+        email: 'alexey@example.com',
+        completedCount: 15,
+        daysCount: 7,
+        settings: {
+            push: true,
+            email: true,
+            reminders: true,
+            sounds: true,
+            notificationSounds: true,
+            showStats: true,
+            language: 'ru',
+            dateFormat: 'DD.MM.YYYY',
+            privacy: 'public'
+        }
+    };
+
+    // Загрузка настроек
+    function loadSettings() {
+        if (themeToggle) {
+            themeToggle.checked = body.classList.contains('dark-theme');
+        }
+        if (languageSelect) {
+            languageSelect.value = currentUser.settings.language || 'ru';
+        }
+        if (dateFormatSelect) {
+            dateFormatSelect.value = currentUser.settings.dateFormat || 'DD.MM.YYYY';
+        }
+    }
+
+    // Сохранение пользователя
+    function saveUser() {
+        localStorage.setItem('isLoggedIn', isLoggedIn);
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    }
+
+    // Обновление UI профиля
+    function updateProfileUI() {
+        if (isLoggedIn) {
+            authBlock.style.display = 'none';
+            profileBlock.classList.add('active');
+            if (userName) userName.textContent = currentUser.name;
+            if (userEmail) userEmail.textContent = currentUser.email;
+            if (userTaskCount) userTaskCount.textContent = tasks.length;
+            if (userCompletedCount) userCompletedCount.textContent = currentUser.completedCount;
+            if (userDaysCount) userDaysCount.textContent = currentUser.daysCount;
+        } else {
+            authBlock.style.display = 'block';
+            profileBlock.classList.remove('active');
+        }
+    }
+
+    // Уведомления
+    function showNotification(message, type = 'info') {
+        notificationMessage.textContent = message;
+        notificationToast.className = 'notification-toast show ' + type;
+        setTimeout(() => notificationToast.classList.remove('show'), 3000);
+    }
+
+    function addNotification(message, type = 'info') {
+        showNotification(message, type);
+    }
+
+    // Тема
+    function setTheme(theme) {
+        const isDark = theme === 'dark';
+        body.classList.toggle('light-theme', !isDark);
+        body.classList.toggle('dark-theme', isDark);
+        
+        if (sunBtn && moonBtn) {
+            sunBtn.classList.toggle('active', !isDark);
+            moonBtn.classList.toggle('active', isDark);
+        }
+        
+        if (lightHeaderImg && darkHeaderImg) {
+            lightHeaderImg.style.display = isDark ? 'none' : 'block';
+            darkHeaderImg.style.display = isDark ? 'block' : 'none';
+        }
+        
+        localStorage.setItem('theme', theme);
+        if (themeToggle) themeToggle.checked = isDark;
+    }
+
+    window.toggleTheme = function() {
+        const isDark = body.classList.contains('dark-theme');
+        setTheme(isDark ? 'light' : 'dark');
+        addNotification(`Тема изменена на ${isDark ? 'светлую' : 'тёмную'}`, 'success');
+    };
+
+    // Переключение секций
+    window.toggleSection = function(section) {
+        const content = document.getElementById(section + 'Section');
+        const header = content.previousElementSibling;
+        if (content) {
+            content.classList.toggle('collapsed');
+            header.classList.toggle('collapsed');
+        }
+    };
+
+    // Синхронизация
+    window.syncNow = function() {
+        if (isSyncing) return;
+        
+        isSyncing = true;
+        const originalText = syncNowBtn.innerHTML;
+        syncNowBtn.innerHTML = '<span class="sync-spinner"></span><span>Синхронизация...</span>';
+        syncNowBtn.disabled = true;
+        
+        setTimeout(() => {
+            lastSyncTime = Date.now();
+            lastSyncText.textContent = 'Последняя синхронизация: только что';
+            isSyncing = false;
+            syncNowBtn.innerHTML = originalText;
+            syncNowBtn.disabled = false;
+            addNotification('Данные синхронизированы', 'success');
+        }, 2000);
+    };
+
+    // Настройки
+    window.toggleSetting = function(setting, value) {
+        currentUser.settings[setting] = value;
+        saveUser();
+        addNotification(`Настройка обновлена`, 'success');
+    };
+
+    window.changeLanguage = function(lang) {
+        currentUser.settings.language = lang;
+        saveUser();
+        addNotification(`Язык изменен на ${lang === 'ru' ? 'русский' : 'английский'}`, 'success');
+    };
+
+    window.changeDateFormat = function(format) {
+        currentUser.settings.dateFormat = format;
+        saveUser();
+        addNotification('Формат даты изменен', 'success');
+    };
+
+    window.changePrivacy = function(value) {
+        currentUser.settings.privacy = value;
+        saveUser();
+        const names = { public: 'публичный', friends: 'только друзья', private: 'приватный' };
+        addNotification(`Профиль теперь ${names[value]}`, 'success');
+    };
+
+    // Авторизация
+    window.loginWithSocial = function(provider) {
+        isLoggedIn = true;
+        currentUser.name = provider === 'Google' ? 'Иван Google' : 
+                          provider === 'Яндекс' ? 'Мария Яндекс' : 
+                          'Петр VK';
+        currentUser.email = `user@${provider.toLowerCase()}.com`;
+        saveUser();
+        updateProfileUI();
+        addNotification(`Вход через ${provider} выполнен`, 'success');
+    };
+
+    window.registerUser = function() {
+        const email = loginEmail ? loginEmail.value.trim() : '';
+        const password = loginPassword ? loginPassword.value.trim() : '';
+        
+        if (!email || !password) {
+            addNotification('Заполните все поля', 'warning');
+            return;
+        }
+        
+        isLoggedIn = true;
+        currentUser.name = email.split('@')[0];
+        currentUser.email = email;
+        currentUser.completedCount = 0;
+        currentUser.daysCount = 1;
+        saveUser();
+        updateProfileUI();
+        addNotification('Регистрация успешна', 'success');
+    };
+
+    window.showLoginForm = function() {
+        addNotification('Введите email и пароль', 'info');
+    };
+
+    window.logoutUser = function() {
+        isLoggedIn = false;
+        saveUser();
+        updateProfileUI();
+        addNotification('Выход выполнен', 'info');
+    };
+
+    // Обработчики
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+
+    if (sunBtn) sunBtn.addEventListener('click', () => setTheme('light'));
+    if (moonBtn) moonBtn.addEventListener('click', () => setTheme('dark'));
+
+    if (notificationClose) {
+        notificationClose.addEventListener('click', () => notificationToast.classList.remove('show'));
+    }
+
+    // Обновление времени синхронизации
+    function updateSyncTime() {
+        const diff = Math.floor((Date.now() - lastSyncTime) / 1000 / 60);
+        if (diff < 1) {
+            lastSyncText.textContent = 'Последняя синхронизация: только что';
+        } else if (diff === 1) {
+            lastSyncText.textContent = 'Последняя синхронизация: 1 минуту назад';
+        } else {
+            lastSyncText.textContent = `Последняя синхронизация: ${diff} минут назад`;
+        }
+    }
+
+    // Инициализация
+    updateProfileUI();
+    loadSettings();
+    updateSyncTime();
+    setInterval(updateSyncTime, 60000);
+})();
+</script>
+</body>
+</html>
