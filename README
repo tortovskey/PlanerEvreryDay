@@ -20,19 +20,4 @@ Quick start
 5. Run
    python app\core\main.py
 
-Default DB values in app/core/DB.py
-- dbname: planer_db
-- user: postgres
-- password: postgres123
-- host: localhost
-- port: 5432
 
-OAuth notes
-- Yandex login uses OAuth authorization and token exchange on the backend.
-- VK login is scaffolded the same way, but both providers require real client_id/client_secret and redirect URI setup.
-- If credentials are empty, provider buttons redirect back with an error.
-
-API auth
-- login/register return access_token and refresh_token
-- API accepts Authorization: Bearer <access_token>
-- browser pages also work with server session after login
