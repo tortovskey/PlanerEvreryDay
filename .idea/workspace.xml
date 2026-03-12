@@ -4,7 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="180c96e3-bb05-4f7b-bcbf-084de0e5f73a" name="Changes" comment="" />
+    <list default="true" id="180c96e3-bb05-4f7b-bcbf-084de0e5f73a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README" beforeDir="false" afterPath="$PROJECT_DIR$/README" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/core/DB.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/DB.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/core/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/fucn/1" beforeDir="false" afterPath="$PROJECT_DIR$/app/fucn/1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/2" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/add_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/add_task.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/css/animations.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/css/animations.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/css/calendar.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/css/calendar.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/css/profile.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/css/profile.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/css/today.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/css/today.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/js/7" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/7" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/js/analytics.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/analytics.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/calendar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/today.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/today.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -40,7 +59,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main-2",
+    "git-widget-placeholder": "Cherry-picking in main-2",
     "last_opened_file_path": "C:/Users/user/Desktop/PlanerEvreryDay-main/PlanerEvreryDay-main-2/app/core",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
