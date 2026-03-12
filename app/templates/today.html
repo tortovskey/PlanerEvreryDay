@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Сегодня — Planer EveryDay{% endblock %}
+{% block page_title %}Фокус на сегодня{% endblock %}
+{% block nav_today %}active{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="/static/css/today.css">{% endblock %}
+{% block content %}
+<section class="today-grid">
+    <div class="glass panel summary-panel">
+        <p class="eyebrow">Today mode</p>
+        <h2 id="todayDateTitle">Сегодня</h2>
+        <p id="todayCount" class="muted">0 задач</p>
+        <div class="progress-block">
+            <div class="progress-label"><span>Выполнено</span><span id="progressText">0%</span></div>
+            <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+        </div>
+    </div>
+    <div class="glass panel tip-panel">
+        <div class="panel-head"><h3>AI-фокус</h3><span id="todayStats" class="pill"></span></div>
+        <p id="focusTip" class="lead compact">Загружаю задачи. Потом уже буду читать нотации про приоритеты и внимание.</p>
+    </div>
+</section>
+<section class="glass panel">
+    <div class="panel-head"><h3>Список задач</h3></div>
+    <div id="todayTasks" class="task-list empty-block"></div>
+</section>
+{% endblock %}
+{% block extra_js %}<script src="/static/js/today_app.js" defer></script>{% endblock %}

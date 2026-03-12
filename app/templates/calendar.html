@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Календарь — Planer EveryDay{% endblock %}
+{% block page_title %}Календарь задач{% endblock %}
+{% block nav_calendar %}active{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="/static/css/calendar.css">{% endblock %}
+{% block content %}
+<section class="glass panel calendar-panel">
+    <div class="calendar-toolbar">
+        <button id="prevMonthBtn" class="ghost-btn">◀</button>
+        <div>
+            <p class="eyebrow">Month view</p>
+            <h2 id="currentMonthYear">Месяц</h2>
+        </div>
+        <button id="nextMonthBtn" class="ghost-btn">▶</button>
+    </div>
+    <div class="weekdays">
+        <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+    </div>
+    <div id="calendarGrid" class="calendar-grid"></div>
+</section>
+<section class="calendar-content-grid">
+    <div class="glass panel">
+        <div class="panel-head"><h3>Добавить или изменить задачу</h3><button id="clearFormBtn" class="ghost-btn">Сброс</button></div>
+        <form id="taskForm" class="task-form modern-form">
+            <input type="hidden" id="taskId">
+            <label>Название<input id="taskTitle" type="text" placeholder="Например, демо клиенту" required></label>
+            <label>Описание<textarea id="taskDescription" rows="4" placeholder="Краткий контекст"></textarea></label>
+            <div class="form-grid-4">
+                <label>Дата<input id="taskDate" type="date" required></label>
+                <label>Время<input id="taskTime" type="time"></label>
+                <label>Длительность, мин<input id="taskDuration" type="number" min="15" step="15" value="60"></label>
+                <label>Приоритет
+                    <select id="taskPriority">
+                        <option value="low">Низкий</option>
+                        <option value="medium" selected>Средний</option>
+                        <option value="high">Высокий</option>
+                    </select>
+                </label>
+            </div>
+            <button type="submit" class="primary-btn">Сохранить</button>
+        </form>
+    </div>
+    <div class="glass panel">
+        <div class="panel-head"><h3>Задачи выбранного дня</h3><span id="selectedDateLabel" class="pill"></span></div>
+        <div id="dayTasks" class="task-list empty-block">Выбери день в календаре.</div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}<script src="/static/js/calendar_app.js" defer></script>{% endblock %}

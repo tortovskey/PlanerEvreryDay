@@ -1,0 +1,38 @@
+Planer EveryDay - full web planner (desktop folder untouched)
+
+What is inside
+- dashboard with stats, search, quick add and AI assistant
+- calendar with CRUD tasks
+- today page with focus advice and status toggles
+- account page and settings page
+- email/password auth
+- JWT for API + web session for browser use
+- OAuth routes for Yandex and VK (need provider credentials)
+
+Quick start
+1. Create venv
+   py -m venv .venv
+2. Activate
+   .\.venv\Scripts\Activate.ps1
+3. Install deps
+   python -m pip install -r requirements.txt
+4. Configure DB and secrets (copy .env.example manually into your environment if needed)
+5. Run
+   python app\core\main.py
+
+Default DB values in app/core/DB.py
+- dbname: planer_db
+- user: postgres
+- password: postgres123
+- host: localhost
+- port: 5432
+
+OAuth notes
+- Yandex login uses OAuth authorization and token exchange on the backend.
+- VK login is scaffolded the same way, but both providers require real client_id/client_secret and redirect URI setup.
+- If credentials are empty, provider buttons redirect back with an error.
+
+API auth
+- login/register return access_token and refresh_token
+- API accepts Authorization: Bearer <access_token>
+- browser pages also work with server session after login

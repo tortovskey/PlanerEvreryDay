@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Аккаунт — Planer EveryDay{% endblock %}
+{% block page_title %}Аккаунт{% endblock %}
+{% block nav_account %}active{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="/static/css/profile.css">{% endblock %}
+{% block content %}
+<section class="settings-grid">
+    <div class="glass panel profile-card">
+        <div class="profile-hero">
+            <div class="avatar big">{{ (current_user.display_name or current_user.email)[0]|upper }}</div>
+            <div>
+                <h2>{{ current_user.display_name }}</h2>
+                <p class="muted">{{ current_user.email }}</p>
+            </div>
+        </div>
+        <form id="profileForm" class="modern-form settings-form">
+            <label>Отображаемое имя<input id="profileName" type="text" value="{{ current_user.display_name }}"></label>
+            <label>Ссылка на аватар<input id="profileAvatar" type="text" value="{{ current_user.avatar_url or '' }}" placeholder="https://..."></label>
+            <button class="primary-btn" type="submit">Сохранить профиль</button>
+            <p id="profileMessage" class="form-message"></p>
+        </form>
+    </div>
+    <div class="glass panel">
+        <div class="panel-head"><h3>Как работает авторизация</h3></div>
+        <ul class="feature-list compact-list">
+            <li>Email + пароль создают пользователя и выдают JWT access/refresh.</li>
+            <li>Веб-интерфейс использует ещё и серверную сессию, чтобы не кидать токен в каждый fetch вручную.</li>
+            <li>VK и Yandex создают или привязывают учётку через oauth_accounts.</li>
+            <li>Настройки и задачи привязаны к user_id. Чужие задачи не показываются.</li>
+        </ul>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}<script src="/static/js/account_app.js" defer></script>{% endblock %}

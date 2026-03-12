@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Главная — Planer EveryDay{% endblock %}
+{% block page_title %}Дашборд задач и AI-планировщик{% endblock %}
+{% block nav_home %}active{% endblock %}
+{% block content %}
+<section class="hero-grid">
+    <div class="hero-card glass feature-panel">
+        <div>
+            <p class="eyebrow">Smart planning system</p>
+            <h2>Один экран для календаря, задач, аккаунта и ассистента</h2>
+            <p class="lead">Здесь уже не просто список дел. Система считает статистику, ищет задачи, строит план дня и учитывает настройки пользователя.</p>
+        </div>
+        <div class="hero-actions-row">
+            <a href="/calendar" class="primary-btn">Открыть календарь</a>
+            <a href="/today" class="ghost-btn">Фокус на сегодня</a>
+        </div>
+    </div>
+    <div class="stats-grid">
+        <div class="stat-card glass"><span>Всего задач</span><strong id="statTotal">0</strong></div>
+        <div class="stat-card glass"><span>Сделано</span><strong id="statDone">0</strong></div>
+        <div class="stat-card glass"><span>Сегодня</span><strong id="statToday">0</strong></div>
+        <div class="stat-card glass"><span>Предстоит</span><strong id="statUpcoming">0</strong></div>
+        <div class="stat-card glass accent"><span>Высокий приоритет</span><strong id="statHigh">0</strong></div>
+    </div>
+</section>
+<section class="dashboard-grid">
+    <div class="stack-col">
+        <div class="glass panel">
+            <div class="panel-head"><h3>Быстрое добавление</h3><span class="pill">MVP+</span></div>
+            <form id="quickTaskForm" class="task-form modern-form">
+                <label>Название
+                    <input type="text" id="quickTitle" placeholder="Что нужно сделать?" required>
+                </label>
+                <label>Описание
+                    <textarea id="quickDescription" rows="3" placeholder="Коротко, но по делу"></textarea>
+                </label>
+                <div class="form-grid-4">
+                    <label>Дата<input type="date" id="quickDate" required></label>
+                    <label>Время<input type="time" id="quickTime"></label>
+                    <label>Длительность, мин<input type="number" id="quickDuration" min="15" step="15" value="60"></label>
+                    <label>Приоритет
+                        <select id="quickPriority">
+                            <option value="low">Низкий</option>
+                            <option value="medium" selected>Средний</option>
+                            <option value="high">Высокий</option>
+                        </select>
+                    </label>
+                </div>
+                <button type="submit" class="primary-btn">Сохранить задачу</button>
+                <p id="quickMessage" class="form-message"></p>
+            </form>
+        </div>
+        <div class="glass panel">
+            <div class="panel-head"><h3>Поиск по задачам</h3></div>
+            <div class="search-row">
+                <input id="searchInput" type="text" placeholder="Клиент, отчёт, звонок, тест...">
+                <button id="searchBtn" class="ghost-btn">Найти</button>
+            </div>
+            <div id="searchResults" class="task-list empty-block">Начни вводить запрос — и посмотрим, что прячется в планировщике.</div>
+        </div>
+    </div>
+    <div class="stack-col">
+        <div class="glass panel assistant-panel">
+            <div class="panel-head"><h3>AI-помощник</h3><span class="pill accent">planner mode</span></div>
+            <p class="muted">Примеры: «добавь завтра в 15:00 созвон с клиентом», «покажи задачи на сегодня», «спланируй день на сегодня», «что делать дальше».</p>
+            <div id="assistantMessages" class="assistant-messages"></div>
+            <form id="assistantForm" class="assistant-form">
+                <textarea id="assistantInput" rows="3" placeholder="Напиши задачу или попроси спланировать день"></textarea>
+                <div class="button-row wrap">
+                    <button type="button" class="ghost-btn prompt-btn" data-prompt="покажи задачи на сегодня">Сегодня</button>
+                    <button type="button" class="ghost-btn prompt-btn" data-prompt="спланируй день на сегодня">План дня</button>
+                    <button type="button" class="ghost-btn prompt-btn" data-prompt="что делать дальше">Фокус</button>
+                    <button type="submit" class="primary-btn">Отправить</button>
+                </div>
+            </form>
+        </div>
+        <div class="glass panel">
+            <div class="panel-head"><h3>Ближайшие задачи</h3></div>
+            <div id="upcomingList" class="task-list empty-block">Пока пусто. Но это временно.</div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}<script src="/static/js/index_app.js" defer></script>{% endblock %}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="{{ current_settings.theme if current_settings else 'nebula' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Planer EveryDay{% endblock %}</title>
+    <link rel="shortcut icon" href="/static/img/4e288c0154d11f18cca864982c6637a_1.jpeg" type="image/x-icon">
+    <link rel="stylesheet" href="/static/css/animations.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="app-body">
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+<div class="bg-orb orb-3"></div>
+{% if current_user %}
+<div class="shell">
+    <aside class="sidebar glass">
+        <div class="brand-box">
+            <div class="brand-mark">PE</div>
+            <div>
+                <strong>Planer EveryDay</strong>
+                <p>AI Daily System</p>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/index" class="nav-item {% block nav_home %}{% endblock %}">Главная</a>
+            <a href="/calendar" class="nav-item {% block nav_calendar %}{% endblock %}">Календарь</a>
+            <a href="/today" class="nav-item {% block nav_today %}{% endblock %}">Сегодня</a>
+            <a href="/settings" class="nav-item {% block nav_settings %}{% endblock %}">Настройки</a>
+            <a href="/account" class="nav-item {% block nav_account %}{% endblock %}">Аккаунт</a>
+        </nav>
+        <div class="sidebar-user glass-soft">
+            <div class="avatar">{{ (current_user.display_name or current_user.email)[0]|upper }}</div>
+            <div>
+                <strong>{{ current_user.display_name }}</strong>
+                <p>{{ current_user.email }}</p>
+            </div>
+        </div>
+        <a href="/logout" class="sidebar-logout">Сбросить локальную сессию</a>
+    </aside>
+    <main class="main-view">
+        <header class="top-shell glass">
+            <div>
+                <p class="eyebrow">Task planner + AI assistant</p>
+                <h1>{% block page_title %}Панель управления{% endblock %}</h1>
+            </div>
+            <div class="top-actions">
+                <button id="themeToggle" class="ghost-btn">Сменить тему</button>
+            </div>
+        </header>
+        {% block content %}{% endblock %}
+    </main>
+</div>
+{% else %}
+{% block auth_content %}{% endblock %}
+{% endif %}
+<script src="/static/js/common.js" defer></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

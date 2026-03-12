@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Настройки — Planer EveryDay{% endblock %}
+{% block page_title %}Настройки{% endblock %}
+{% block nav_settings %}active{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="/static/css/profile.css">{% endblock %}
+{% block content %}
+<section class="settings-grid">
+    <div class="glass panel">
+        <div class="panel-head"><h3>Предпочтения</h3></div>
+        <form id="settingsForm" class="modern-form settings-form">
+            <div class="form-grid-2">
+                <label>Тема
+                    <select id="settingsTheme">
+                        <option value="nebula">Nebula</option>
+                        <option value="night">Night</option>
+                        <option value="light">Light</option>
+                    </select>
+                </label>
+                <label>Часовой пояс
+                    <input id="settingsTimezone" type="text" placeholder="Europe/Paris">
+                </label>
+            </div>
+            <div class="form-grid-4">
+                <label>Начало дня<input id="settingsStartHour" type="number" min="0" max="23"></label>
+                <label>Конец дня<input id="settingsEndHour" type="number" min="1" max="23"></label>
+                <label>Фокус, мин<input id="settingsFocusMinutes" type="number" min="15"></label>
+                <label>Перерыв, мин<input id="settingsBreakMinutes" type="number" min="5"></label>
+            </div>
+            <div class="form-grid-2 checkbox-row">
+                <label class="checkbox-label"><input id="settingsEmailNotifications" type="checkbox"> Email-уведомления</label>
+                <label class="checkbox-label"><input id="settingsWeeklyDigest" type="checkbox"> Недельная сводка</label>
+            </div>
+            <label>Режим AI
+                <select id="settingsAiMode">
+                    <option value="planner">Planner</option>
+                    <option value="coach">Coach</option>
+                    <option value="strict">Strict</option>
+                </select>
+            </label>
+            <button class="primary-btn" type="submit">Сохранить настройки</button>
+            <p id="settingsMessage" class="form-message"></p>
+        </form>
+    </div>
+    <div class="glass panel">
+        <div class="panel-head"><h3>OAuth и API</h3></div>
+        <div class="integration-list">
+            <div class="integration-item"><strong>Yandex OAuth</strong><p>Работает через /auth/yandex/login. Нужны YANDEX_CLIENT_ID и YANDEX_CLIENT_SECRET.</p></div>
+            <div class="integration-item"><strong>VK OAuth</strong><p>Работает через /auth/vk/login. Нужны VK_CLIENT_ID и VK_CLIENT_SECRET.</p></div>
+            <div class="integration-item"><strong>JWT API</strong><p>Токены выдаются после email/пароль логина или регистрации. API принимает Bearer access token или веб-сессию.</p></div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}<script src="/static/js/settings_app.js" defer></script>{% endblock %}
