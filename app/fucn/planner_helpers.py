@@ -18,12 +18,14 @@ def sort_tasks_for_focus(tasks):
 
 def build_day_plan(tasks, settings, date_label):
     start_hour = settings.get('start_hour', 9)
-    focus = settings.get('focus_minutes', 50)
     pause = settings.get('break_minutes', 10)
     current = datetime.strptime(f'{date_label} {start_hour:02d}:00', '%Y-%m-%d %H:%M')
     lines = []
-    sorted_tasks = sort_tasks_for_focus(tasks)
-    for index, task in enumerate(sorted_tasks[:8], start=1):
+    open_tasks = [task for task in tasks if task.get('status') != 'done']
+    if tasks and not open_tasks:
+        return 'Все задачи на этот день выполнены.'
+    scheduled_tasks = sort_tasks_for_focus(open_tasks)[:8]
+    for index, task in enumerate(scheduled_tasks, start=1):
         duration = int(task.get('duration_minutes') or 60)
         duration = max(20, min(duration, 240))
         start = current.strftime('%H:%M')
@@ -31,7 +33,7 @@ def build_day_plan(tasks, settings, date_label):
         end = current.strftime('%H:%M')
         marker = '⭐' if task.get('priority') == 'high' else '•'
         lines.append(f"{marker} {start}-{end} — {task.get('title')}")
-        if index < len(sorted_tasks[:8]):
+        if index < len(scheduled_tasks):
             current += timedelta(minutes=pause)
     if not lines:
         return 'На этот день задач нет. Лучший план — создать 1 важную задачу и 1 короткую, иначе день превращается в философию без действий.'
